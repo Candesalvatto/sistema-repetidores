@@ -1,7 +1,7 @@
-from views.menu import mostrar_menu
+from views.menu import ejecutar_menu
 
 
 if __name__ == "__main__":
-    mostrar_menu()
+    ejecutar_menu()
 
     
