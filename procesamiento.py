@@ -83,5 +83,30 @@ if conexion:
     print(df_secundario.groupby('ciclo_lectivo')[['tasa_repitencia', 'tasa_sobreedad']].mean().round(2))
     print("Correlación entre repitencia y sobreedad:", round(p5['tasa_repitencia'].corr(p5['tasa_sobreedad']), 2))
 
+    por_grado = df_secundario.groupby('n_anio_grado')[['repetidores', 'estudiantes']].sum()
+    por_grado['tasa_repitencia'] = (por_grado['repetidores'] / por_grado['estudiantes'] * 100).round(2)
+    print("\nHallazgo: repitencia por grado en secundaria, 2021-2025")
+    print(por_grado)
+    print("Correlación entre repitencia y sobreedad:", round(p5['tasa_repitencia'].corr(p5['tasa_sobreedad']), 2))
+
+    print("\n-----------------------------------------------------------------")
+    print("HALLAZGO PRINCIPAL")
+
+    por_grado = df_secundario.groupby('n_anio_grado')[['repetidores', 'estudiantes']].sum()
+    por_grado['tasa_repitencia'] = (por_grado['repetidores'] / por_grado['estudiantes'] * 100).round(2)
+    print("Repitencia por grado en secundaria, 2021-2025")
+    print(por_grado)
+
+    primeros = por_grado.loc[1:3]
+    ultimos = por_grado.loc[6:7]
+
+    tasa_1_3 = primeros['repetidores'].sum() / primeros['estudiantes'].sum() * 100
+    tasa_6_7 = ultimos['repetidores'].sum() / ultimos['estudiantes'].sum() * 100
+    porcentaje = primeros['repetidores'].sum() / por_grado['repetidores'].sum() * 100
+
+    print("Tasa de repitencia de 1º a 3º año:", round(tasa_1_3, 2))
+    print("Tasa de repitencia de 6º y 7º año:", round(tasa_6_7, 2))
+    print("Veces más alta:", round(tasa_1_3 / tasa_6_7, 1))
+    print("% de los repetidores del secundario que están en 1º a 3º:", round(porcentaje, 1))
 else:
     print("No se pudo establecer conexión con la base de datos.")
