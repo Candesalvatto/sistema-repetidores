@@ -38,33 +38,50 @@ if conexion:
     # Pregunta 1: Promedio de tasa de sobreedad por departamento y ciclo lectivo
     p1 = df.groupby(['n_departamento', 'ciclo_lectivo'])['tasa_sobreedad'].mean().round(2)
     print("\n1. Promedio de Tasa de Sobreedad por Departamento y Año:")
-    print(p1.head())
+    print("\nLos 5 casos más altos:")
+    print(p1.sort_values(ascending=False).head(5))
+    print("\nLos 3 casos más bajos:")
+    print(p1.sort_values().head(3))
+    print("\nPromedio de toda la provincia, año por año:")
+    print(df.groupby('ciclo_lectivo')['tasa_sobreedad'].mean().round(2))
 
     # Pregunta 2: Máximo de repetidores por año o grado
-    p2 = df.groupby('n_anio_grado')['repetidores'].max()
-    print("\n2. Máximo de Repetidores por Año/Grado:")
+    p2 = df.groupby(['n_nivel', 'n_anio_grado'])['repetidores'].max()
+    print("\n2. Máximo de Repetidores por Año/Grado, entre 2021 - 2025:")
+    maximo = df['repetidores'].max()
     print(p2)
+    print("Dónde ocurrió el máximo de todos:")
+    print(df[df['repetidores'] == maximo][['n_departamento', 'ciclo_lectivo', 'n_nivel', 'n_anio_grado', 'repetidores']])
 
     # Pregunta 3: Tasa mínima de repitencia en el último ciclo lectivo (Filtro 1)
     ultimo_ciclo = df['ciclo_lectivo'].max()
     df_ultimo = df[df['ciclo_lectivo'] == ultimo_ciclo]
-    p3 = df_ultimo.groupby('n_departamento')['tasa_repitencia'].min().round(2)
-    print(f"\n3. Tasa Mínima de Repitencia por Departamento en {ultimo_ciclo}:")
-    print(p3.head())
+    print(f"\n3. Tasa de Repitencia por Departamento en {ultimo_ciclo}:")
+    p3 = df_ultimo.groupby('n_departamento')[['repetidores', 'estudiantes']].sum()
+    p3['tasa_repitencia'] = (p3['repetidores'] / p3['estudiantes'] * 100).round(2)
+    p3 = p3.sort_values('tasa_repitencia')
+    print("Las 3 más bajas:")
+    print(p3.head(3))
+    print("Las 3 más altas:")
+    print(p3.tail(3))
 
     # Pregunta 4: Suma total de repetidores y sobreedad por año y departamento
-    p4 = df.groupby(['ciclo_lectivo', 'n_departamento'])[['repetidores', 'sobreedad']].sum()
-    print("\n4. Suma Total de Repetidores y Sobreedad por Año y Departamento:")
-    print(p4.head())
+    print("\n4.Totales de toda la provincia, por año:")
+    print(df.groupby('ciclo_lectivo')[['estudiantes', 'repetidores', 'sobreedad']].sum())
+    p4 = df_ultimo.groupby('n_departamento')[['repetidores', 'sobreedad']].sum()
+    print(f"Los 5 departamentos con más sobreedad en {ultimo_ciclo}:")
+    print(p4.sort_values('sobreedad', ascending=False).head(5))
 
     # Pregunta 5: Filtro por Nivel Secundario y agrupamiento (Filtro 2)
     df_secundario = df[df['n_nivel'] == 'Secundario']
     p5 = df_secundario.groupby(['n_departamento', 'ciclo_lectivo']).agg({
         'repetidores': 'sum',
+        'tasa_repitencia': 'mean',
         'tasa_sobreedad': 'mean'
     }).round(2)
-    print("\n5. Repetidores y Promedio de Tasa de Sobreedad en Secundario:")
-    print(p5.head())
+    print("\n5. Tasa de repitencia y Tasa de Sobreedad en Secundario en toda la provincia, año por año:")
+    print(df_secundario.groupby('ciclo_lectivo')[['tasa_repitencia', 'tasa_sobreedad']].mean().round(2))
+    print("Correlación entre repitencia y sobreedad:", round(p5['tasa_repitencia'].corr(p5['tasa_sobreedad']), 2))
 
 else:
     print("No se pudo establecer conexión con la base de datos.")
