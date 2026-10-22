@@ -10,7 +10,6 @@ SELECT
     m.estudiantes,
     m.repetidores,
     m.sobreedad,
-    -- Campos calculados reales (Tasas normalizadas en %)
     ROUND((CAST(m.repetidores AS DECIMAL(10,2)) / NULLIF(m.estudiantes, 0)) * 100, 2) AS tasa_repitencia,
     ROUND((CAST(m.sobreedad AS DECIMAL(10,2)) / NULLIF(m.estudiantes, 0)) * 100, 2) AS tasa_sobreedad
 FROM matricula m

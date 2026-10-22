@@ -55,8 +55,8 @@ if conexion:
 
     # Pregunta 3: Tasa mínima de repitencia en el último ciclo lectivo (Filtro 1)
     ultimo_ciclo = df['ciclo_lectivo'].max()
-    df_ultimo = df[df['ciclo_lectivo'] == ultimo_ciclo]
-    print(f"\n3. Tasa de Repitencia por Departamento en {ultimo_ciclo}:")
+    df_ultimo = df[(df['ciclo_lectivo'] == ultimo_ciclo) & (df['n_nivel'] == 'Secundario')]
+    print(f"\n3. Tasa de Repitencia del secundario por Departamento en {ultimo_ciclo}:")
     p3 = df_ultimo.groupby('n_departamento')[['repetidores', 'estudiantes']].sum()
     p3['tasa_repitencia'] = (p3['repetidores'] / p3['estudiantes'] * 100).round(2)
     p3 = p3.sort_values('tasa_repitencia')
@@ -65,11 +65,11 @@ if conexion:
     print("Las 3 más altas:")
     print(p3.tail(3))
 
-    # Pregunta 4: Suma total de repetidores y sobreedad por año y departamento
-    print("\n4.Totales de toda la provincia, por año:")
-    print(df.groupby('ciclo_lectivo')[['estudiantes', 'repetidores', 'sobreedad']].sum())
+      # Pregunta 4: Suma total de repetidores y sobreedad por año y departamento (nivel secundario)
+    print("\n4. Totales del nivel secundario en toda la provincia, por año:")
+    print(df[df['n_nivel'] == 'Secundario'].groupby('ciclo_lectivo')[['estudiantes', 'repetidores', 'sobreedad']].sum())
     p4 = df_ultimo.groupby('n_departamento')[['repetidores', 'sobreedad']].sum()
-    print(f"Los 5 departamentos con más sobreedad en {ultimo_ciclo}:")
+    print(f"Los 5 departamentos con más sobreedad en el nivel secundario en {ultimo_ciclo}:")
     print(p4.sort_values('sobreedad', ascending=False).head(5))
 
     # Pregunta 5: Filtro por Nivel Secundario y agrupamiento (Filtro 2)
@@ -97,16 +97,16 @@ if conexion:
     print("Repitencia por grado en secundaria, 2021-2025")
     print(por_grado)
 
-    primeros = por_grado.loc[1:3]
-    ultimos = por_grado.loc[6:7]
+    primeros = por_grado.loc[1:4]
+    ultimos = por_grado.loc[5:7]
 
-    tasa_1_3 = primeros['repetidores'].sum() / primeros['estudiantes'].sum() * 100
-    tasa_6_7 = ultimos['repetidores'].sum() / ultimos['estudiantes'].sum() * 100
+    tasa_1_4 = primeros['repetidores'].sum() / primeros['estudiantes'].sum() * 100
+    tasa_5_7 = ultimos['repetidores'].sum() / ultimos['estudiantes'].sum() * 100
     porcentaje = primeros['repetidores'].sum() / por_grado['repetidores'].sum() * 100
 
-    print("Tasa de repitencia de 1º a 3º año:", round(tasa_1_3, 2))
-    print("Tasa de repitencia de 6º y 7º año:", round(tasa_6_7, 2))
-    print("Veces más alta:", round(tasa_1_3 / tasa_6_7, 1))
-    print("% de los repetidores del secundario que están en 1º a 3º:", round(porcentaje, 1))
+    print("Tasa de repitencia de 1º a 4º año:", round(tasa_1_4, 2))
+    print("Tasa de repitencia de 5º a 7º año:", round(tasa_5_7, 2))
+    print("Veces más alta:", round(tasa_1_4 / tasa_5_7, 1))
+    print("% de los repetidores del secundario que están en 1º a 4º:", round(porcentaje, 1))
 else:
     print("No se pudo establecer conexión con la base de datos.")

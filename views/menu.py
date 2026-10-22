@@ -343,3 +343,7 @@ def ejecutar_menu():
                 input("\nPresiona Enter para volver al menú...")
             else:
                 print("No se encontró el archivo procesamiento.py.")
+
+        elif opcion == "0":
+            print("\nSaliendo del sistema. ¡Hasta luego!")
+            break
